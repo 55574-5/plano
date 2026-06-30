@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Estudos · Plano 40 Dias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE6D3;
+    --paper-dark:#E2D8B9;
+    --paper-card:#F6F1E2;
+    --ink:#1F2A38;
+    --ink-soft:#54657C;
+    --ink-faint:#8B98A8;
+    --line:#C9BC97;
+    --line-soft:#DCD2AE;
+    --accent-green:#2F6B52;
+    --accent-green-soft:#DCE9DF;
+    --accent-amber:#8C5A2B;
+    --accent-red:#9B3A2E;
+    --shadow:0 6px 18px rgba(31,42,56,.14);
+    --shadow-lg:0 18px 44px rgba(31,42,56,.28);
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(180deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 1px, transparent 1px, transparent 26px),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Source Serif 4', serif;
+    min-height:100vh;
+    padding:32px 18px 80px;
+  }
+  .wrap{max-width:880px;margin:0 auto;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:20px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:26px;
+    flex-wrap:wrap;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:'Spectral', serif;
+    font-weight:700;
+    font-size:clamp(28px,5vw,40px);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .progress-box{
+    font-family:'IBM Plex Mono', monospace;
+    text-align:right;
+    min-width:160px;
+  }
+  .progress-box .count{
+    font-size:26px;
+    font-weight:600;
+    color:var(--accent-green);
+  }
+  .progress-box .label{
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .progress-track{
+    margin-top:8px;
+    height:6px;
+    width:160px;
+    background:var(--paper-dark);
+    border:1px solid var(--line);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--accent-green);
+    width:0%;
+    transition:width .4s ease;
+  }
+
+  /* ---------- Calendar nav ---------- */
+  .cal-nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+  }
+  .cal-nav .month-title{
+    font-family:'Spectral', serif;
+    font-weight:600;
+    font-size:19px;
+  }
+  .nav-btn{
+    font-family:'IBM Plex Mono', monospace;
+    background:var(--paper-card);
+    border:1px solid var(--ink);
+    color:var(--ink);
+    padding:6px 12px;
+    cursor:pointer;
+    font-size:13px;
+    border-radius:var(--radius);
+  }
+  .nav-btn:hover{background:var(--ink);color:var(--paper-card);}
+  .nav-btn:disabled{opacity:.3;cursor:not-allowed;background:var(--paper-card);color:var(--ink);}
+
+  /* ---------- Calendar grid ---------- */
+  .cal-card{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:30px;
+  }
+  .weekdays{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin-bottom:6px;
+  }
+  .weekdays div{text-align:center;padding:4px 0;}
+  .days-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+  }
+  .day-cell{
+    position:relative;
+    aspect-ratio:1/1;
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--ink-faint);
+  }
+  .day-cell.empty{border-color:transparent;background:transparent;}
+  .day-cell.study{
+    cursor:pointer;
+    color:var(--ink);
+    border-color:var(--ink);
+    background:var(--paper-card);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .day-cell.study:hover{
+    transform:translateY(-2px);
+    box-shadow:var(--shadow);
+  }
+  .day-cell .num{font-size:14px;font-weight:600;}
+  .day-cell .dia-tag{font-size:8px;letter-spacing:.05em;color:var(--ink-soft);margin-top:1px;}
+  .dots{display:flex;gap:3px;margin-top:4px;}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--line);}
+  .dot.done{background:var(--accent-green);}
+  .day-cell.today{outline:2px solid var(--accent-red);outline-offset:-2px;}
+  .day-cell.fully-done{background:var(--accent-green-soft);}
+
+  .legend{
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    color:var(--ink-soft);
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px dashed var(--line);
+  }
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .legend .dot{width:7px;height:7px;}
+
+  /* ---------- Modal / Ficha ---------- */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(20,26,34,.55);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:30px 16px;
+    overflow-y:auto;
+    z-index:50;
+  }
+  .overlay.open{display:flex;}
+  .ficha{
+    background:var(--paper-card);
+    width:100%;
+    max-width:640px;
+    border:1px solid var(--ink);
+    box-shadow:var(--shadow-lg);
+    border-radius:var(--radius);
+    position:relative;
+    animation:rise .22s ease;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .ficha-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    padding:20px 22px 16px;
+    border-bottom:2px solid var(--ink);
+  }
+  .ficha-head .id{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .ficha-head h2{
+    font-family:'Spectral', serif;
+    font-size:23px;
+    margin:4px 0 0;
+  }
+  .ficha-head .date-str{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:3px;
+    text-transform:capitalize;
+  }
+  .close-btn{
+    background:none;border:1px solid var(--ink-faint);
+    width:30px;height:30px;border-radius:50%;
+    font-family:'IBM Plex Mono', monospace;
+    cursor:pointer;color:var(--ink);
+    font-size:14px;
+    flex-shrink:0;
+  }
+  .close-btn:hover{background:var(--ink);color:var(--paper-card);}
+
+  .ficha-body{padding:20px 22px 24px;}
+  .materia{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--paper);
+    padding:16px 18px 18px;
+    margin-bottom:16px;
+    overflow:hidden;
+  }
+  .materia:last-child{margin-bottom:0;}
+  .materia-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:9px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--accent-amber);
+    margin-bottom:5px;
+  }
+  .materia h3{
+    font-family:'Spectral', serif;
+    font-size:17px;
+    margin:0 0 6px;
+  }
+  .materia p.conteudo{
+    margin:0 0 14px;
+    font-size:14.5px;
+    line-height:1.5;
+    color:var(--ink);
+  }
+  .materia label.field-label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  textarea.aprendi{
+    width:100%;
+    min-height:74px;
+    resize:vertical;
+    font-family:'Source Serif 4', serif;
+    font-size:14px;
+    line-height:1.5;
+    padding:10px 11px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:#fff;
+    color:var(--ink);
+  }
+  textarea.aprendi:focus{outline:2px solid var(--ink);outline-offset:1px;}
+  textarea.aprendi[readonly]{background:var(--paper-dark);color:var(--ink-soft);}
+
+  .materia-foot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .done-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    background:var(--ink);
+    color:var(--paper-card);
+    border:1px solid var(--ink);
+    padding:9px 16px;
+    border-radius:var(--radius);
+    cursor:pointer;
+  }
+  .done-btn:hover:not(:disabled){background:var(--accent-green);border-color:var(--accent-green);}
+  .done-btn:disabled{
+    background:var(--paper-dark);
+    color:var(--ink-faint);
+    border-color:var(--line);
+    cursor:not-allowed;
+  }
+  .edit-link{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    background:none;
+    border:none;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+  }
+
+  .stamp{
+    position:absolute;
+    top:10px;
+    right:14px;
+    width:88px;
+    height:88px;
+    border:3px double var(--accent-green);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    transform:rotate(-13deg);
+    color:var(--accent-green);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    line-height:1.25;
+    mix-blend-mode:multiply;
+    opacity:.92;
+    pointer-events:none;
+  }
+  .stamp .ts{font-size:8px;font-weight:400;display:block;margin-top:3px;letter-spacing:.02em;}
+
+  .revisao-box{
+    margin-top:4px;
+    padding:12px 16px;
+    border-left:3px solid var(--accent-amber);
+    background:var(--paper);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    border-radius:0 var(--radius) var(--radius) 0;
+  }
+  .revisao-box b{color:var(--ink);}
+
+  footer.app-footer{
+    text-align:center;
+    margin-top:30px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+  }
+  footer.app-footer button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    background:none;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    padding:5px 10px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    margin-top:10px;
+  }
+  footer.app-footer button:hover{border-color:var(--accent-red);color:var(--accent-red);}
+
+  @media (max-width:480px){
+    .stamp{width:70px;height:70px;font-size:9px;top:8px;right:8px;}
+    .ficha-head h2{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <p class="eyebrow">Plano de estudos · 40 dias · Banca IGDRH</p>
+      <h1>Ficha de Estudos</h1>
+    </div>
+    <div class="progress-box">
+      <div><span class="count" id="doneCount">0</span> / 80</div>
+      <div class="label">temas concluídos</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </header>
+
+  <div class="cal-nav">
+    <button class="nav-btn" id="prevMonth">&larr; anterior</button>
+    <div class="month-title" id="monthTitle">—</div>
+    <button class="nav-btn" id="nextMonth">próximo &rarr;</button>
+  </div>
+
+  <div class="cal-card">
+    <div class="weekdays">
+      <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+    </div>
+    <div class="days-grid" id="daysGrid"></div>
+    <div class="legend">
+      <span><span class="dot"></span> tema pendente</span>
+      <span><span class="dot done"></span> tema concluído</span>
+      <span>contorno vermelho = hoje</span>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    Os dados ficam salvos apenas neste navegador (localStorage).
+    <br>
+    <button id="resetBtn">Apagar todo o progresso</button>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="ficha" id="fichaBox"></div>
+</div>
+
+<script>
+/* ============== DADOS DO PLANO ============== */
+// Dia 1 começa amanhã em relação à criação deste plano.
+const START_DATE = new Date(2026, 6, 1); // 1 de julho de 2026 (mês 6 = julho, 0-index)
+
+const PLANO = [
+/* Dia 1 */ {m1:{materia:"Língua Portuguesa", conteudo:"Ortografia oficial."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Arquivologia: conceitos fundamentais."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 2 */ {m1:{materia:"Matemática", conteudo:"Noções de conjunto."}, m2:{materia:"Informática", conteudo:"Pacote Office 2019: Word (principais ferramentas e comandos)."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 3 */ {m1:{materia:"Língua Portuguesa", conteudo:"Acentuação gráfica."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Gestão de documentos físicos e eletrônicos."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 4 */ {m1:{materia:"Matemática", conteudo:"Números naturais: operações básicas."}, m2:{materia:"Atualidades", conteudo:"Fatos políticos ocorridos no Brasil nos últimos 12 meses."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 5 */ {m1:{materia:"Língua Portuguesa", conteudo:"Resolução de questões focadas em Ortografia e Acentuação."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Protocolo e Tipos de arquivo."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 6 */ {m1:{materia:"Informática", conteudo:"Internet: navegação, conceitos de URL, links, sites, busca e impressão."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Resolução de questões sobre Arquivologia e Protocolo."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 7 */ {m1:{materia:"Simulado Semanal (60 min)", conteudo:"Responder questões apenas dos temas estudados na semana."}, m2:{materia:"Análise de Erros (60 min)", conteudo:"Correção detalhada do simulado e reforço da teoria onde houver falhas."}, revisao:null},
+/* Dia 8 */ {m1:{materia:"Língua Portuguesa", conteudo:"Flexão nominal e verbal."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Organização do trabalho na repartição: utilização da agenda."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 9 */ {m1:{materia:"Matemática", conteudo:"Números naturais: múltiplos e divisores de um número natural."}, m2:{materia:"Informática", conteudo:"Pacote Office 2019: Excel (fórmulas básicas, células e formatação)."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 10 */ {m1:{materia:"Língua Portuguesa", conteudo:"Pronomes: emprego e formas de tratamento."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Organização na repartição: uso, manutenção preventiva de equipamentos e economia de suprimentos."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 11 */ {m1:{materia:"Matemática", conteudo:"Números inteiros: operações e propriedades."}, m2:{materia:"Atualidades", conteudo:"Fatos econômicos ocorridos no Brasil e no mundo nos últimos 12 meses."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 12 */ {m1:{materia:"Língua Portuguesa", conteudo:"Pronomes: colocação pronominal (próclise, ênclise e mesóclise)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Comunicação interpessoal e solução de conflitos."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 13 */ {m1:{materia:"Informática", conteudo:"Correio eletrônico: noções básicas, preparo, envio e anexação de arquivos (Gmail, Outlook e Webmail)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Comunicação não violenta (CNV)."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 14 */ {m1:{materia:"Simulado Semanal (60 min)", conteudo:"Responder questões apenas dos temas estudados na semana."}, m2:{materia:"Análise de Erros (60 min)", conteudo:"Correção detalhada do simulado e reforço da teoria onde houver falhas."}, revisao:null},
+/* Dia 15 */ {m1:{materia:"Língua Portuguesa", conteudo:"Emprego de tempos e modos verbais."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Relações pessoais no ambiente de trabalho: hierarquia."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 16 */ {m1:{materia:"Matemática", conteudo:"Números racionais, representação fracionária e decimal: operações e propriedades."}, m2:{materia:"Informática", conteudo:"Pacote Office 2019: PowerPoint (criação de slides e transições)."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 17 */ {m1:{materia:"Língua Portuguesa", conteudo:"Vozes do verbo (ativa, passiva e reflexiva)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Excelência no atendimento ao cidadão."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 18 */ {m1:{materia:"Matemática", conteudo:"Números decimais e operações com decimais."}, m2:{materia:"Atualidades", conteudo:"Fatos sociais e culturais relevantes no Brasil e no mundo nos últimos 12 meses."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 19 */ {m1:{materia:"Língua Portuguesa", conteudo:"Concordância nominal."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Atendimento presencial, por telefone ou meios digitais."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 20 */ {m1:{materia:"Informática", conteudo:"Plataformas de videoconferência: chats, chamadas, criação de salas/grupos (MS Teams, Google Meet e Zoom)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Resolução de questões sobre Atendimento e Comunicação."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 21 */ {m1:{materia:"Simulado Semanal (60 min)", conteudo:"Responder questões apenas dos temas estudados na semana."}, m2:{materia:"Análise de Erros (60 min)", conteudo:"Correção detalhada do simulado e reforço da teoria onde houver falhas."}, revisao:null},
+/* Dia 22 */ {m1:{materia:"Língua Portuguesa", conteudo:"Concordância verbal."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Documentos oficiais: tipos, composição e estrutura."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 23 */ {m1:{materia:"Matemática", conteudo:"Razão e proporção."}, m2:{materia:"Informática", conteudo:"Uso dos principais navegadores (Internet Explorer, Mozilla Firefox e Google Chrome)."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 24 */ {m1:{materia:"Língua Portuguesa", conteudo:"Regência nominal e verbal."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Linguagem dos atos e comunicações oficiais (ofício, e-mail, mensagem)."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 25 */ {m1:{materia:"Matemática", conteudo:"Regra de três simples."}, m2:{materia:"Atualidades", conteudo:"Fatos esportivos de grande impacto no Brasil e no mundo."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 26 */ {m1:{materia:"Língua Portuguesa", conteudo:"Ocorrência da crase (regras gerais e casos proibidos)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Manual de Redação da Presidência da República (3ª edição) — Parte I."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 27 */ {m1:{materia:"Informática", conteudo:"Aplicativos do Google Workspace: Docs (Documentos), Planilhas e Forms (Formulários)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Manual de Redação da Presidência da República (3ª edição) — Parte II."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 28 */ {m1:{materia:"Simulado Semanal (60 min)", conteudo:"Responder questões apenas dos temas estudados na semana."}, m2:{materia:"Análise de Erros (60 min)", conteudo:"Correção detalhada do simulado e reforço da teoria onde houver falhas."}, revisao:null},
+/* Dia 29 */ {m1:{materia:"Língua Portuguesa", conteudo:"Pontuação (foco total no uso da vírgula)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Noções de controle de estoque de materiais, equipamentos e suprimentos."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 30 */ {m1:{materia:"Matemática", conteudo:"Porcentagem."}, m2:{materia:"Informática", conteudo:"Aplicativos do Google Workspace: Drive (armazenamento em nuvem) e Agenda (agenda compartilhada)."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 31 */ {m1:{materia:"Língua Portuguesa", conteudo:"Interpretação de texto (técnicas de leitura e identificação de pegadinhas)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Conhecimentos básicos sobre relatórios, planilhas e apresentações."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 32 */ {m1:{materia:"Matemática", conteudo:"Relação entre grandezas, tabelas e gráficos."}, m2:{materia:"Informática", conteudo:"Conceitos básicos de segurança da informação: confidencialidade, integridade e disponibilidade."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 33 */ {m1:{materia:"Língua Portuguesa", conteudo:"Questões mistas de Sintaxe (Crase, Regência e Concordância combinadas)."}, m2:{materia:"Conhecimentos Específicos", conteudo:"Ética no serviço público."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 34 */ {m1:{materia:"Matemática", conteudo:"Sistema métrico: medidas de tempo, comprimento, superfície e capacidade."}, m2:{materia:"Informática", conteudo:"Conceitos básicos de inteligência artificial generativa como ferramenta para otimizar o trabalho."}, revisao:"Revisão ativa dos principais pontos e erros do dia."},
+/* Dia 35 */ {m1:{materia:"Simulado Geral (60 min)", conteudo:"Prova simulada cobrindo todo o conteúdo programático do edital."}, m2:{materia:"Análise de Erros (60 min)", conteudo:"Correção mapeando e revisando os seus principais pontos fracos."}, revisao:null},
+/* Dia 36 */ {m1:{materia:"Língua Portuguesa e Matemática", conteudo:"Resolução massiva de questões (preferencialmente da banca IGDRH)."}, m2:{materia:"Redação Oficial e Arquivologia", conteudo:"Revisão por mapas mentais ou resumos."}, revisao:"Anotação rápida dos erros cometidos nas questões."},
+/* Dia 37 */ {m1:{materia:"Informática e Conhecimentos Específicos", conteudo:"Resolução massiva de questões."}, m2:{materia:"Matemática", conteudo:"Revisão de fórmulas e regras práticas (Regra de 3, Porcentagem e Sistema Métrico)."}, revisao:"Anotação rápida dos erros cometidos nas questões."},
+/* Dia 38 */ {m1:{materia:"Simulado de Prova Anterior", conteudo:"Execução de uma prova antiga completa da banca sob condições reais de tempo."}, m2:{materia:"Análise dos Erros", conteudo:"Análise cirúrgica dos erros cometidos no simulado e releitura rápida desses pontos teóricos."}, revisao:"Check-up mental dos temas revisados."},
+/* Dia 39 */ {m1:{materia:'Revisão "Decoreba"', conteudo:"Memorização de pronomes de tratamento, fechos oficiais, regras proibitivas de crase e pilares da segurança da informação."}, m2:{materia:"Atualidades", conteudo:"Leitura rápida e dinâmica dos principais tópicos anotados ao longo dos dias."}, revisao:"Fixação de pontos críticos."},
+/* Dia 40 */ {m1:{materia:"Revisão Leve", conteudo:"Apenas leitura de resumos muito curtos, palavras-chave e anotações próprias. Nada de resolver questões difíceis ou focar no que não sabe."}, m2:{materia:"Preparação Prática", conteudo:"Mentalização positiva: organizar canetas transparentes, documento de identidade, água, lanche e conferir o local de prova."}, revisao:null},
+];
+
+/* ============== HELPERS ============== */
+const STORAGE_PREFIX = "plano-estudo-40d:dia-";
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const WEEKDAY_LONG = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+
+function addDays(date, n){
+  const d = new Date(date);
+  d.setDate(d.getDate() + n);
+  return d;
+}
+function sameDay(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function dayIndexForDate(date){
+  // retorna 1..40 se a data faz parte do plano, senão null
+  const diff = Math.round((stripTime(date) - stripTime(START_DATE)) / 86400000);
+  if(diff < 0 || diff > 39) return null;
+  return diff + 1;
+}
+function stripTime(d){
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+function dateForDay(n){
+  return addDays(START_DATE, n-1);
+}
+function loadProgress(n){
+  try{
+    const raw = localStorage.getItem(STORAGE_PREFIX + n);
+    if(!raw) return {m1:{aprendi:"",concluido:false,ts:null}, m2:{aprendi:"",concluido:false,ts:null}};
+    return JSON.parse(raw);
+  }catch(e){
+    return {m1:{aprendi:"",concluido:false,ts:null}, m2:{aprendi:"",concluido:false,ts:null}};
+  }
+}
+function saveProgress(n, data){
+  localStorage.setItem(STORAGE_PREFIX + n, JSON.stringify(data));
+}
+function formatTs(ts){
+  if(!ts) return "";
+  const d = new Date(ts);
+  return d.toLocaleDateString('pt-BR') + " " + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ============== ESTADO DO CALENDÁRIO ============== */
+let viewYear = START_DATE.getFullYear();
+let viewMonth = START_DATE.getMonth();
+const lastDay = dateForDay(40);
+const firstMonthBound = { y: START_DATE.getFullYear(), m: START_DATE.getMonth() };
+const lastMonthBound = { y: lastDay.getFullYear(), m: lastDay.getMonth() };
+
+function renderMonthNav(){
+  document.getElementById('monthTitle').textContent = MESES[viewMonth] + " " + viewYear;
+  const atFirst = (viewYear === firstMonthBound.y && viewMonth === firstMonthBound.m);
+  const atLast = (viewYear === lastMonthBound.y && viewMonth === lastMonthBound.m);
+  document.getElementById('prevMonth').disabled = atFirst;
+  document.getElementById('nextMonth').disabled = atLast;
+}
+
+function renderCalendar(){
+  renderMonthNav();
+  const grid = document.getElementById('daysGrid');
+  grid.innerHTML = "";
+  const firstOfMonth = new Date(viewYear, viewMonth, 1);
+  const startWeekday = firstOfMonth.getDay(); // 0=Dom
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+  const today = new Date();
+
+  for(let i=0;i<startWeekday;i++){
+    const empty = document.createElement('div');
+    empty.className = 'day-cell empty';
+    grid.appendChild(empty);
+  }
+
+  for(let d=1; d<=daysInMonth; d++){
+    const cellDate = new Date(viewYear, viewMonth, d);
+    const n = dayIndexForDate(cellDate);
+    const cell = document.createElement('div');
+    cell.className = 'day-cell';
+
+    if(sameDay(cellDate, today)) cell.classList.add('today');
+
+    if(n){
+      cell.classList.add('study');
+      const prog = loadProgress(n);
+      if(prog.m1.concluido && prog.m2.concluido) cell.classList.add('fully-done');
+
+      cell.innerHTML = `
+        <div class="num">${d}</div>
+        <div class="dia-tag">DIA ${String(n).padStart(2,'0')}</div>
+        <div class="dots">
+          <div class="dot ${prog.m1.concluido ? 'done':''}"></div>
+          <div class="dot ${prog.m2.concluido ? 'done':''}"></div>
+        </div>
+      `;
+      cell.addEventListener('click', () => openFicha(n));
+    } else {
+      cell.innerHTML = `<div class="num">${d}</div>`;
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function updateGlobalProgress(){
+  let done = 0;
+  for(let n=1;n<=40;n++){
+    const p = loadProgress(n);
+    if(p.m1.concluido) done++;
+    if(p.m2.concluido) done++;
+  }
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('progressFill').style.width = (done/80*100) + "%";
+}
+
+/* ============== MODAL / FICHA ============== */
+function openFicha(n){
+  const dia = PLANO[n-1];
+  const date = dateForDay(n);
+  const prog = loadProgress(n);
+  const dateLabel = WEEKDAY_LONG[date.getDay()] + ", " + date.getDate() + " de " + MESES[date.getMonth()].toLowerCase() + " de " + date.getFullYear();
+
+  const box = document.getElementById('fichaBox');
+  box.innerHTML = `
+    <div class="ficha-head">
+      <div>
+        <div class="id">Ficha nº ${String(n).padStart(3,'0')} · Dia ${n} de 40</div>
+        <h2>Plano do Dia</h2>
+        <div class="date-str">${dateLabel}</div>
+      </div>
+      <button class="close-btn" id="closeFicha">&times;</button>
+    </div>
+    <div class="ficha-body">
+      ${renderMateria(n, 'm1', dia.m1, prog.m1)}
+      ${renderMateria(n, 'm2', dia.m2, prog.m2)}
+      ${dia.revisao ? `<div class="revisao-box"><b>Revisão final do dia:</b> ${dia.revisao}</div>` : ''}
+    </div>
+  `;
+
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('closeFicha').addEventListener('click', closeFicha);
+
+  ['m1','m2'].forEach(key => wireMateria(n, key));
+}
+
+function renderMateria(n, key, materiaData, progData){
+  const stamp = progData.concluido
+    ? `<div class="stamp">Concluído<span class="ts">${formatTs(progData.ts)}</span></div>`
+    : '';
+  return `
+    <div class="materia" id="materia-${key}">
+      ${stamp}
+      <div class="materia-tag">${key === 'm1' ? 'Tema 1' : 'Tema 2'}</div>
+      <h3>${materiaData.materia}</h3>
+      <p class="conteudo">${materiaData.conteudo}</p>
+      <label class="field-label" for="textarea-${key}">O que você aprendeu</label>
+      <textarea class="aprendi" id="textarea-${key}" placeholder="Escreva aqui um resumo do que você estudou e aprendeu hoje..." ${progData.concluido ? 'readonly' : ''}>${progData.aprendi || ''}</textarea>
+      <div class="materia-foot">
+        <button class="done-btn" id="done-${key}" ${progData.concluido ? 'disabled' : (progData.aprendi && progData.aprendi.trim() ? '' : 'disabled')}>
+          ${progData.concluido ? '✓ Concluído' : 'Marcar como feito'}
+        </button>
+        ${progData.concluido ? `<button class="edit-link" id="edit-${key}">editar resposta</button>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function wireMateria(n, key){
+  const textarea = document.getElementById('textarea-' + key);
+  const doneBtn = document.getElementById('done-' + key);
+  const editBtn = document.getElementById('edit-' + key);
+
+  if(textarea && doneBtn && !textarea.readOnly){
+    textarea.addEventListener('input', () => {
+      doneBtn.disabled = !textarea.value.trim();
+    });
+  }
+
+  if(doneBtn){
+    doneBtn.addEventListener('click', () => {
+      const prog = loadProgress(n);
+      prog[key].aprendi = textarea.value.trim();
+      prog[key].concluido = true;
+      prog[key].ts = Date.now();
+      saveProgress(n, prog);
+      openFicha(n); // re-render ficha com carimbo
+      renderCalendar();
+      updateGlobalProgress();
+    });
+  }
+
+  if(editBtn){
+    editBtn.addEventListener('click', () => {
+      const prog = loadProgress(n);
+      prog[key].concluido = false;
+      saveProgress(n, prog);
+      openFicha(n);
+      renderCalendar();
+      updateGlobalProgress();
+    });
+  }
+}
+
+function closeFicha(){
+  document.getElementById('overlay').classList.remove('open');
+}
+
+document.getElementById('overlay').addEventListener('click', (e) => {
+  if(e.target.id === 'overlay') closeFicha();
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') closeFicha();
+});
+
+/* ============== NAVEGAÇÃO DE MÊS ============== */
+document.getElementById('prevMonth').addEventListener('click', () => {
+  viewMonth--;
+  if(viewMonth < 0){ viewMonth = 11; viewYear--; }
+  renderCalendar();
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  viewMonth++;
+  if(viewMonth > 11){ viewMonth = 0; viewYear++; }
+  renderCalendar();
+});
+
+/* ============== RESET ============== */
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(confirm("Tem certeza que deseja apagar todo o progresso salvo? Essa ação não pode ser desfeita.")){
+    for(let n=1;n<=40;n++){
+      localStorage.removeItem(STORAGE_PREFIX + n);
+    }
+    renderCalendar();
+    updateGlobalProgress();
+  }
+});
+
+/* ============== INIT ============== */
+renderCalendar();
+updateGlobalProgress();
+</script>
+</body>
+</html>
